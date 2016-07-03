@@ -1,3 +1,7 @@
+mandel
+*.bin
+*.png
+
 # Compiled Object files
 *.slo
 *.lo
