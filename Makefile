@@ -1,10 +1,10 @@
-src = $(wildcard *.c)
-obj = $(src:.c=.o)
+src = $(wildcard *.cpp)
+obj = $(src:.cpp=.o)
 
-CFLAGS = -std=c11 -g -O3 -march=native -fopenmp
-LDFLAGS = -lm -fopenmp
+CXXFLAGS = -std=c++11 -g -O3 -march=native -Wall
+LDFLAGS = -ltbb
 
-mandel: $(obj) ;    $(CC) -o $@ $^ $(LDFLAGS)
+mandel: $(obj) ;    $(CXX) -o $@ $^ $(LDFLAGS)
 
 .PHONY: clean
 clean: ;rm -f $(obj) myprog
