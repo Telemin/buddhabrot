@@ -1,18 +1,16 @@
 #!/usr/bin/env  python3
 
 import sys
-import matplotlib
-matplotlib.use('agg')
-import matplotlib.image as mi
-import matplotlib.cm as mcm
-
+import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.colors as mc
 
 def main():
-    data = np.fromfile(sys.argv[1],'long',-1)
-    data = data.reshape((1000,1000))
-    data = np.log(data)
-    mi.imsave("abb.png",data,cmap=mcm.viridis)    
+    data = np.loadtxt(sys.argv[1]) + 1
+    plt.hist(data.flatten())
+    plt.show()
+    plt.pcolor(data, cmap='gray') 
+    plt.show()
 
     return(0)
 

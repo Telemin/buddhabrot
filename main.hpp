@@ -2,8 +2,10 @@
 #define MAIN_HPP
 
 #include <iostream>
+#include <fstream>
+#include <chrono>
 
-#include "trajectoryset.hpp"
+#include "trajectorygenerator.hpp"
 
 #endif
 
