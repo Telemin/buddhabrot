@@ -20,18 +20,14 @@ class Trajectory {
         
     for(auto it = (this->z.begin() + 1); it != this->z.end(); it++){
       std::complex<T> tmpz = std::pow(*(it-1),2) + c;
-//      std::cout << tmpz << " ";
       if((tmpz.real() <= rmin) || (tmpz.real() >= rmax) ||
          (tmpz.imag() <= imin) || (tmpz.imag() > imax) ){
-//        std::cout << "breaking. ";
         step = it - z.begin();
         break;
       }
-//      std::cout << std::endl;
       *it = tmpz;
     }
     this->z.resize(step);
-//    std::cout << "Final point " << z.back() << std::endl;
     return(step);
   }
 

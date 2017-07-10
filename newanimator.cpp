@@ -1,4 +1,5 @@
-#include "imageanimator.hpp"
+#include "newanimator.hpp"
+#include <algorithm>
 
 ImageAnimator::ImageAnimator(size_t x, size_t y):x_extent(x), y_extent(y){
   init_imagearray();
@@ -8,31 +9,26 @@ ImageAnimator::ImageAnimator(size_t x, size_t y):x_extent(x), y_extent(y){
   std::cout << this->imgactor << std::endl;
 }
 
-void ImageAnimator::Start(vtkAnimationCue::AnimationCueInfo *info, vtkRenderer *ren){
-  ren->AddActor(this->imgactor);
-  ren->ResetCamera();
-  this->imgimport->Modified();
-  this->imgimport->Update();
-}
+void ImageAnimator::register_renderer(vtkSmartPointer<vtkRenderer> ren){
+  this->renderer = ren;
+  this->renderer->AddActor(this->imgactor);
+};
 
-void ImageAnimator::Tick(vtkAnimationCue::AnimationCueInfo *info, vtkRenderer *ren){
-  this->trajgen->generate_trajs(10000);
-  this->trajgen->calculate_trajs(200);
+void ImageAnimator::render(){
+  std::cout << "Rendercall" << std::endl;
+  this->trajgen->generate_trajs(1000);
+  this->trajgen->calculate_trajs();
   this->trajgen->deposit_to_histogram();
-  std::vector<double> histo = this->trajgen->get_histogram();
+  std::vector<unsigned char> histo = this->trajgen->get_histogram();
   std::copy(histo.begin(), histo.end(), this->imgdata->begin());
   this->imgimport->Modified();
   this->imgimport->Update();
-  ren->GetRenderWindow()->Render();
-}
-
-void ImageAnimator::Stop(vtkAnimationCue::AnimationCueInfo *info, vtkRenderer *ren){
-  ren->RemoveActor(this->imgactor);
+  this->renderer->GetRenderWindow()->Render();
 }
 
 void ImageAnimator::init_imagearray(){
-  this->imgdata = std::make_shared<std::vector<double> >();
-  this->imgdata->resize(x_extent * y_extent, 0);
+  this->imgdata = std::make_shared<std::vector<unsigned char> >();
+  this->imgdata->resize(x_extent * y_extent * 3, 0);
 }
     
 void ImageAnimator::init_imageimporter(){
@@ -41,8 +37,8 @@ void ImageAnimator::init_imageimporter(){
   this->imgimport->SetDataOrigin(0, 0, 0);
   this->imgimport->SetWholeExtent(0, x_extent-1, 0, y_extent-1, 0, 0);
   this->imgimport->SetDataExtentToWholeExtent();
-  this->imgimport->SetDataScalarTypeToDouble();
-  this->imgimport->SetNumberOfScalarComponents(1);
+  this->imgimport->SetDataScalarTypeToUnsignedChar();
+  this->imgimport->SetNumberOfScalarComponents(3);
   this->imgimport->SetImportVoidPointer(this->imgdata->data());
   this->imgimport->Update();
 }

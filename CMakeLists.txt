@@ -28,7 +28,7 @@ set (MANDELSOURCES
 
 set (TESTSOURCES
   vtktest
-  imageanimator
+  newanimator
   cuehandler
   trajectorygenerator
 )

@@ -4,7 +4,7 @@ CueHandler *CueHandler::New(){
   return new CueHandler;
 }
 
-void CueHandler::Execute(vtkObject *vtkNotUsed(caller), unsigned long event, void *calldata){
+/*void CueHandler::Execute(vtkObject *vtkNotUsed(caller), unsigned long event, void *calldata){
   if((this->animator != 0) && (this->renderer != 0)){
     vtkAnimationCue::AnimationCueInfo *info =
       static_cast<vtkAnimationCue::AnimationCueInfo *>(calldata);
@@ -21,8 +21,13 @@ void CueHandler::Execute(vtkObject *vtkNotUsed(caller), unsigned long event, voi
     }
   }
 }
+*/
 
-void CueHandler::RegisterAnimator(std::shared_ptr<AnimationHandler> animatorptr){
+void CueHandler::Execute(vtkObject *vtkNotUsed(caller), unsigned long event, void *calldata){
+  animator->render();
+}
+
+void CueHandler::RegisterAnimator(std::shared_ptr<ImageAnimator> animatorptr){
   this->animator = animatorptr;
 }
 
