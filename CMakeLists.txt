@@ -23,11 +23,6 @@ set(EXTRA_LIBS ${EXTRA_LIBS} ${HDF5_C_LIBRARIES} ${HDF5_HL_LIBRARIES})
 
 set (MANDELSOURCES
   main
-  trajectorygenerator
-)
-
-set (TESTSOURCES
-  vtktest
   newanimator
   cuehandler
   trajectorygenerator
@@ -36,7 +31,3 @@ set (TESTSOURCES
 add_executable(mandel ${MANDELSOURCES})
 set_target_properties(mandel PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(mandel ${EXTRA_LIBS})
-
-add_executable(vtktest ${TESTSOURCES})
-set_target_properties(vtktest PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(vtktest ${EXTRA_LIBS})
