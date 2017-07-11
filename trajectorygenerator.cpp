@@ -101,6 +101,7 @@ void TrajectoryGenerator::deposit_to_histogram(){
         double ip = point_it->imag();
         size_t xi = (rp - rmin)/dx;
         size_t yi = (ip - imin)/dy;
+	std::cout << yi << " & ";
         red[arr_offset - xi * hist_ybins - yi - 2] += 1;
         yi = hist_ybins - yi - 1;
         red[arr_offset - xi * hist_ybins - yi - 2] += 1;

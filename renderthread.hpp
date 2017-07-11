@@ -42,7 +42,7 @@ void RenderThread::init_renderwindow(size_t x_res, size_t y_res){
   this->renderwindow = vtkSmartPointer<vtkRenderWindow>::New();
   this->renderwindow->SetMultiSamples(0); //hw antialiasing level
   this->renderwindow->AddRenderer(renderer);
-  this->renderwindow->SetSize(800,800);
+  this->renderwindow->SetSize(x_res,y_res);
 
   this->iren = vtkSmartPointer<vtkRenderWindowInteractor>::New();
   this->iren->SetRenderWindow(renderwindow); 

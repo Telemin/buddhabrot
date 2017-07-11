@@ -13,9 +13,10 @@ endif()
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -O0 -ggdb -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O3 -march=native -ffast-math")
 
-find_package(VTK REQUIRED)
+find_package(VTK REQUIRED COMPONENTS vtkCommonCore vtkImagingCore vtkRenderingOpenGL2 vtkRenderingImage vtkInteractionImage) 
 include(${VTK_USE_FILE})
 set(EXTRA_LIBS ${EXTRA_LIBS} ${VTK_LIBRARIES})
+message(${VTK_LIBRARIES})
  
 #find_package(HDF5 REQUIRED COMPONENTS C HL)
 #include_directories(${HDF5_INCLUDE_DIRS})  
