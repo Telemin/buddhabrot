@@ -15,11 +15,11 @@ void ImageAnimator::register_renderer(vtkSmartPointer<vtkRenderer> ren){
 };
 
 void ImageAnimator::render(){
-  std::cout << "Rendercall" << std::endl;
-  this->trajgen->generate_trajs(1000);
+  std::cout << "Frame " << ++frame << std::endl;
+  this->trajgen->generate_trajs(5000);
   this->trajgen->calculate_trajs();
   this->trajgen->deposit_to_histogram();
-  std::vector<unsigned char> histo = this->trajgen->get_histogram();
+  std::vector<unsigned char> histo = this->trajgen->get_histogram(2, 0);
   std::copy(histo.begin(), histo.end(), this->imgdata->begin());
   this->imgimport->Modified();
   this->imgimport->Update();

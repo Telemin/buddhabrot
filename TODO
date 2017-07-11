@@ -1,0 +1,4 @@
+Threading
+Non-local means denoising
+Zooming -> non-trivial, need monte-carlo importance mapping
+convergence testing

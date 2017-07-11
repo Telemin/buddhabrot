@@ -18,9 +18,10 @@ class TrajectoryGenerator{
     double hist_xbins, hist_ybins;
     double rmin, rmax, imin, imax;
     bool stats_stale = true;
-    size_t min = 20;
-    size_t mid = 200;
-    size_t max = 2000;
+    size_t thres = 5;
+    size_t min = 50;
+    size_t mid = 400;
+    size_t max = 1000;
 
   public:
     TrajectoryGenerator(double rmin, double rmax, double imax);
@@ -33,7 +34,7 @@ class TrajectoryGenerator{
 
     void init_histogram(size_t x, size_t y);
     void deposit_to_histogram();
-    std::vector<unsigned char> get_histogram();
+    std::vector<unsigned char> get_histogram(double gamma = 2.0, double thres = 0.);
 
 };
 

@@ -69,6 +69,9 @@ void TrajectoryGenerator::deposit_to_histogram(){
 
   for(auto traj_it = trajs.begin(); traj_it != trajs.end(); traj_it++){
     size_t tlen = (*traj_it)->z.size();
+    if(tlen < this->thres){
+      continue;
+    }
     if(tlen < this->min){
       for(auto point_it = (*traj_it)->z.begin(); point_it != (*traj_it)->z.end(); point_it++){
         double rp = point_it->real();
@@ -76,7 +79,7 @@ void TrajectoryGenerator::deposit_to_histogram(){
         size_t xi = (rp - rmin)/dx;
         size_t yi = (ip - imin)/dy;
         blue[arr_offset - xi * hist_ybins - yi] += 1;
-        yi = hist_ybins - yi;
+        yi = hist_ybins - yi - 1;
         blue[arr_offset - xi * hist_ybins - yi] += 1;
       }
       continue;
@@ -88,7 +91,7 @@ void TrajectoryGenerator::deposit_to_histogram(){
         size_t xi = (rp - rmin)/dx;
         size_t yi = (ip - imin)/dy;
         green[arr_offset - xi * hist_ybins - yi - 1] += 1;
-        yi = hist_ybins - yi;
+        yi = hist_ybins - yi - 1;
         green[arr_offset - xi * hist_ybins - yi - 1] += 1;
       }
       continue;
@@ -99,28 +102,28 @@ void TrajectoryGenerator::deposit_to_histogram(){
         size_t xi = (rp - rmin)/dx;
         size_t yi = (ip - imin)/dy;
         red[arr_offset - xi * hist_ybins - yi - 2] += 1;
-        yi = hist_ybins - yi;
+        yi = hist_ybins - yi - 1;
         red[arr_offset - xi * hist_ybins - yi - 2] += 1;
     }
   }
   trajs.clear();
-  double rmult = 255./std::sqrt(*std::max_element(red.begin(), red.end()));
-  double gmult = 255./std::sqrt(*std::max_element(green.begin(), green.end()));
-  double bmult = 255./std::sqrt(*std::max_element(blue.begin(), blue.end()));
-  //double rmult = 255.0/(double)(*std::max_element(red.begin(), red.end()));
-  //double gmult = 255.0/(double)(*std::max_element(green.begin(), green.end()));
-  //double bmult = 255.0/(double)(*std::max_element(blue.begin(), blue.end()));
-
-  for(size_t i = 0; i <= arr_offset; i++){
-    //histogram[3*i] = (red[i]) * rmult;
-    //histogram[3*i +1] = (green[i]) * gmult;
-    //histogram[3*i +2] = (blue[i]) * bmult;
-    histogram[3*i] = std::sqrt(red[i]) * rmult;
-    histogram[3*i +1] = std::sqrt(green[i]) * gmult;
-    histogram[3*i +2] = std::sqrt(blue[i]) * bmult;
-  }    
 }
 
-std::vector<unsigned char> TrajectoryGenerator::get_histogram(){
+std::vector<unsigned char> TrajectoryGenerator::get_histogram(double gamma, double thres){
+  double igamma = 1./gamma;
+  double rmax = *std::max_element(red.begin(), red.end());
+  double gmax = *std::max_element(green.begin(), green.end());
+  double bmax = *std::max_element(blue.begin(), blue.end());
+
+  std::fill(histogram.begin(), histogram.end(), 0);
+  size_t arr_offset = hist_xbins * hist_ybins;
+  for(size_t i = 0; i < arr_offset; i++){
+    double rr = red[i]/rmax;
+    histogram[3*i] = 255.*std::pow(rr, igamma);
+    double gr = green[i]/gmax;
+    histogram[3*i +1] = 255.*std::pow(gr, igamma);
+    double br = blue[i]/bmax;
+    histogram[3*i +2] = 255.*std::pow(br, igamma);
+  }    
   return(histogram);
 }

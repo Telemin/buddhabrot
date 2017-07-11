@@ -30,6 +30,7 @@ class ImageAnimator{
   std::shared_ptr<std::vector<unsigned char> > imgdata;
   std::shared_ptr<TrajectoryGenerator> trajgen;
   size_t x_extent, y_extent;
+  size_t frame = 0;
   double val = 0;
 
   void init_imagearray();    
