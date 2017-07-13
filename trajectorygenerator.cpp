@@ -18,21 +18,13 @@ void TrajectoryGenerator::generate_trajs(size_t n_trajs){
       re = rand() / rmult + rmin;
       im = rand() / imult + imin;
     } while(TrajectoryGenerator::in_mandelbrot_center(re, im));
-    this->trajs.push_back(std::make_shared<mandel>(re,im)); 
-  }
-}
 
-void TrajectoryGenerator::calculate_trajs(){
-  stats_stale = true;
-  size_t len;
-  auto it = trajs.begin();
-  while(it != trajs.end()){
-    len = (*it)->calculate_trajectory(this->max, rmin, rmax, imin, imax);
-    if (len == this->max){
-      it = trajs.erase(it);
+    mandel* traj = new mandel(re,im);
+    size_t len = traj->calculate_trajectory(this->max, rmin, rmax, imin, imax);
+    if (len < this->max){
+    	this->trajs.push(traj); 
       continue;
     }
-    it++;
   }
 }
 
@@ -49,7 +41,7 @@ bool TrajectoryGenerator::in_mandelbrot_center(double re, double im){
 }
 
 size_t TrajectoryGenerator::num_trajs(){
-  return(trajs.size());
+  return(trajs.unsafe_size());
 }
 
 void TrajectoryGenerator::init_histogram(size_t x, size_t y){
@@ -67,13 +59,19 @@ void TrajectoryGenerator::deposit_to_histogram(){
   double dy = (imax - imin) / hist_ybins;
   size_t arr_offset = hist_xbins * hist_ybins - 1;
 
-  for(auto traj_it = trajs.begin(); traj_it != trajs.end(); traj_it++){
-    size_t tlen = (*traj_it)->z.size();
+  size_t iterations = trajs.unsafe_size();
+  for(size_t i = 0; i < iterations; i++){
+    mandel* traj_it;
+    if(!trajs.try_pop(traj_it)){
+	std::cout << "Queue shorter than expected, this is an error!" << std::endl;
+     	break;
+    }	
+    size_t tlen = traj_it->z.size();
     if(tlen < this->thres){
       continue;
     }
     if(tlen < this->min){
-      for(auto point_it = (*traj_it)->z.begin(); point_it != (*traj_it)->z.end(); point_it++){
+      for(auto point_it = traj_it->z.begin(); point_it != traj_it->z.end(); point_it++){
         double rp = point_it->real();
         double ip = point_it->imag();
         size_t xi = (rp - rmin)/dx;
@@ -85,7 +83,7 @@ void TrajectoryGenerator::deposit_to_histogram(){
       continue;
     }
     if(tlen < this->mid){
-      for(auto point_it = (*traj_it)->z.begin(); point_it != (*traj_it)->z.end(); point_it++){
+      for(auto point_it = traj_it->z.begin(); point_it != traj_it->z.end(); point_it++){
         double rp = point_it->real();
         double ip = point_it->imag();
         size_t xi = (rp - rmin)/dx;
@@ -96,18 +94,17 @@ void TrajectoryGenerator::deposit_to_histogram(){
       }
       continue;
     }
-    for(auto point_it = (*traj_it)->z.begin(); point_it != (*traj_it)->z.end(); point_it++){
+    for(auto point_it = traj_it->z.begin(); point_it != traj_it->z.end(); point_it++){
         double rp = point_it->real();
         double ip = point_it->imag();
         size_t xi = (rp - rmin)/dx;
         size_t yi = (ip - imin)/dy;
-	std::cout << yi << " & ";
         red[arr_offset - xi * hist_ybins - yi - 2] += 1;
         yi = hist_ybins - yi - 1;
         red[arr_offset - xi * hist_ybins - yi - 2] += 1;
     }
+    delete traj_it;
   }
-  trajs.clear();
 }
 
 std::vector<unsigned char> TrajectoryGenerator::get_histogram(double gamma, double thres){

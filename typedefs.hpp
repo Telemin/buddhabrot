@@ -6,6 +6,8 @@
 #include <list>
 #include <memory>
 
+#include "tbb/concurrent_queue.h"
+
 #include "trajectory.hpp"
 
 //Forward Decls
@@ -19,6 +21,6 @@ typedef MandelTrajectory<num> mandel;
 typedef JuliaTrajectory<num> julia;
 
 typedef std::shared_ptr<traj> traj_ptr;
-typedef std::list<traj_ptr> traj_container;
+typedef tbb::concurrent_queue<mandel*> traj_container;
 
 #endif

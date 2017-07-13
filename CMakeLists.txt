@@ -4,6 +4,8 @@ PROJECT(mandel)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
  
+list(APPEND CMAKE_MODULE_PATH .)
+
 if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE Debug CACHE STRING
              "Choose the type of build, options are: None Debug Release"
@@ -18,6 +20,9 @@ include(${VTK_USE_FILE})
 set(EXTRA_LIBS ${EXTRA_LIBS} ${VTK_LIBRARIES})
 message(${VTK_LIBRARIES})
  
+find_package(TBB)
+set(EXTRA_LIBS ${EXTRA_LIBS} ${TBB_LIBRARIES})
+
 #find_package(HDF5 REQUIRED COMPONENTS C HL)
 #include_directories(${HDF5_INCLUDE_DIRS})  
 #set(EXTRA_LIBS ${EXTRA_LIBS} ${HDF5_C_LIBRARIES} ${HDF5_HL_LIBRARIES})
