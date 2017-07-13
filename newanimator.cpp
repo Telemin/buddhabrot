@@ -14,9 +14,12 @@ void ImageAnimator::register_renderer(vtkSmartPointer<vtkRenderer> ren){
   this->renderer->AddActor(this->imgactor);
 };
 
+void ImageAnimator::launch_threads(size_t nthreads){
+  this->trajgen->launch_threads(nthreads);
+}
+
 void ImageAnimator::render(){
   std::cout << "Frame " << ++frame << std::endl;
-  this->trajgen->generate_trajs(5000);
   this->trajgen->deposit_to_histogram();
   std::vector<unsigned char> histo = this->trajgen->get_histogram(2, 0);
   std::copy(histo.begin(), histo.end(), this->imgdata->begin());

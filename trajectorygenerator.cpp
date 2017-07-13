@@ -60,6 +60,7 @@ void TrajectoryGenerator::deposit_to_histogram(){
   size_t arr_offset = hist_xbins * hist_ybins - 1;
 
   size_t iterations = trajs.unsafe_size();
+  std::cout << "Queue Size: " << iterations << std::endl;
   for(size_t i = 0; i < iterations; i++){
     mandel* traj_it;
     if(!trajs.try_pop(traj_it)){
@@ -124,4 +125,23 @@ std::vector<unsigned char> TrajectoryGenerator::get_histogram(double gamma, doub
     histogram[3*i +2] = 255.*std::pow(br, igamma);
   }    
   return(histogram);
+}
+
+void TrajectoryGenerator::runthread(){
+  while(!this->stop){
+    if(this->trajs.unsafe_size() < 60000){	  
+	generate_trajs(100);
+    }
+  }
+} 
+
+void TrajectoryGenerator::launch_threads(size_t nthreads){
+  this->stop = false;
+  for(size_t i = 0; i < nthreads; i++){
+    threads.push_back(std::thread(&TrajectoryGenerator::runthread, this));
+  }
+}
+
+void TrajectoryGenerator::stop_threads(){
+  this->stop = true;
 }

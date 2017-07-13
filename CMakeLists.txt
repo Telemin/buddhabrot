@@ -20,6 +20,9 @@ include(${VTK_USE_FILE})
 set(EXTRA_LIBS ${EXTRA_LIBS} ${VTK_LIBRARIES})
 message(${VTK_LIBRARIES})
  
+find_package(Threads)
+set(EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+
 find_package(TBB)
 set(EXTRA_LIBS ${EXTRA_LIBS} ${TBB_LIBRARIES})
 

@@ -54,7 +54,7 @@ void RenderThread::init_renderwindow(size_t x_res, size_t y_res){
 void RenderThread::init_scene(double scene_length){
   this->cuehandler = vtkSmartPointer<CueHandler>::New();
   this->iren->AddObserver(vtkCommand::TimerEvent, this->cuehandler);
-  int tid = this->iren->CreateRepeatingTimer(100);
+  int tid = this->iren->CreateRepeatingTimer(40);
   std::cout << "Timer id: " << tid << std::endl;
 }
 

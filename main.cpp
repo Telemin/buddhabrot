@@ -14,6 +14,7 @@ int main(int, char *[])
   std::shared_ptr<RenderThread> scenerenderer = std::make_shared<RenderThread>();
   std::shared_ptr<ImageAnimator> animator = std::make_shared<ImageAnimator>(1000,1000);
   animator->register_trajectorygenerator(trajgen);
+  animator->launch_threads(4);
 
   scenerenderer->init_renderwindow(1000,1000);
   scenerenderer->init_scene(0);

@@ -3,6 +3,7 @@
 
 #include <random>
 #include <algorithm>
+#include <thread>
 
 #include "typedefs.hpp"
 #include "trajectory.hpp"
@@ -18,16 +19,21 @@ class TrajectoryGenerator{
     double hist_xbins, hist_ybins;
     double rmin, rmax, imin, imax;
     bool stats_stale = true;
+    bool stop;
     size_t thres = 5;
     size_t min = 50;
     size_t mid = 400;
     size_t max = 1000;
+    std::vector<std::thread> threads;
 
   public:
     TrajectoryGenerator(double rmin, double rmax, double imax);
 
     static bool in_mandelbrot_center(double re, double imag);
 
+    void launch_threads(size_t nthreads);
+    void stop_threads();
+    void runthread();
     void generate_trajs(size_t n_trajs);
     void calculate_trajs();
     size_t num_trajs();
