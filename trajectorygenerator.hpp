@@ -20,10 +20,10 @@ class TrajectoryGenerator{
     double rmin, rmax, imin, imax;
     bool stats_stale = true;
     bool stop;
-    size_t thres = 5;
-    size_t min = 50;
-    size_t mid = 400;
-    size_t max = 1000;
+    size_t thres = 10;
+    size_t min = 200;
+    size_t mid = 2000;
+    size_t max = 20000;
     std::vector<std::thread> threads;
 
   public:

@@ -18,6 +18,10 @@ void ImageAnimator::launch_threads(size_t nthreads){
   this->trajgen->launch_threads(nthreads);
 }
 
+void ImageAnimator::terminate_threads(){
+  this->trajgen->stop_threads();
+}
+
 void ImageAnimator::render(){
   std::cout << "Frame " << ++frame << std::endl;
   this->trajgen->deposit_to_histogram();

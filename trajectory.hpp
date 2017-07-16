@@ -35,6 +35,8 @@ class Trajectory {
     return(step);
   }
 
+  virtual ~Trajectory(){};
+
   protected:
     std::complex<T> z0;
     std::complex<T> c;

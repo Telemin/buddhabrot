@@ -23,7 +23,8 @@ void TrajectoryGenerator::generate_trajs(size_t n_trajs){
     size_t len = traj->calculate_trajectory(this->max, rmin, rmax, imin, imax);
     if (len < this->max){
     	this->trajs.push(traj); 
-      continue;
+    } else {
+      delete traj;
     }
   }
 }
@@ -69,9 +70,7 @@ void TrajectoryGenerator::deposit_to_histogram(){
     }	
     size_t tlen = traj_it->z.size();
     if(tlen < this->thres){
-      continue;
-    }
-    if(tlen < this->min){
+    } else if(tlen < this->min){
       for(auto point_it = traj_it->z.begin(); point_it != traj_it->z.end(); point_it++){
         double rp = point_it->real();
         double ip = point_it->imag();
@@ -81,28 +80,26 @@ void TrajectoryGenerator::deposit_to_histogram(){
         yi = hist_ybins - yi - 1;
         blue[arr_offset - xi * hist_ybins - yi] += 1;
       }
-      continue;
-    }
-    if(tlen < this->mid){
+    } else if(tlen < this->mid){
       for(auto point_it = traj_it->z.begin(); point_it != traj_it->z.end(); point_it++){
         double rp = point_it->real();
         double ip = point_it->imag();
         size_t xi = (rp - rmin)/dx;
         size_t yi = (ip - imin)/dy;
-        green[arr_offset - xi * hist_ybins - yi - 1] += 1;
+        green[arr_offset - xi * hist_ybins - yi] += 1;
         yi = hist_ybins - yi - 1;
-        green[arr_offset - xi * hist_ybins - yi - 1] += 1;
+        green[arr_offset - xi * hist_ybins - yi] += 1;
       }
-      continue;
-    }
-    for(auto point_it = traj_it->z.begin(); point_it != traj_it->z.end(); point_it++){
+    } else {
+      for(auto point_it = traj_it->z.begin(); point_it != traj_it->z.end(); point_it++){
         double rp = point_it->real();
         double ip = point_it->imag();
         size_t xi = (rp - rmin)/dx;
         size_t yi = (ip - imin)/dy;
-        red[arr_offset - xi * hist_ybins - yi - 2] += 1;
+        red[arr_offset - xi * hist_ybins - yi] += 1;
         yi = hist_ybins - yi - 1;
-        red[arr_offset - xi * hist_ybins - yi - 2] += 1;
+        red[arr_offset - xi * hist_ybins - yi] += 1;
+      }
     }
     delete traj_it;
   }
@@ -129,7 +126,7 @@ std::vector<unsigned char> TrajectoryGenerator::get_histogram(double gamma, doub
 
 void TrajectoryGenerator::runthread(){
   while(!this->stop){
-    if(this->trajs.unsafe_size() < 60000){	  
+    if(this->trajs.unsafe_size() < 1000){	  
 	generate_trajs(100);
     }
   }
@@ -144,4 +141,7 @@ void TrajectoryGenerator::launch_threads(size_t nthreads){
 
 void TrajectoryGenerator::stop_threads(){
   this->stop = true;
+  for(auto& it : this->threads){
+    it.join();
+  }
 }

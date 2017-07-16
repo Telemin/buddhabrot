@@ -23,6 +23,7 @@ class ImageAnimator{
   void render();
   void register_trajectorygenerator(std::shared_ptr<TrajectoryGenerator> traj);
   void launch_threads(size_t nthreads = 1);
+  void terminate_threads();
   
   protected:
   vtkSmartPointer<vtkImageImport> imgimport;

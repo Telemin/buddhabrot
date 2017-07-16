@@ -33,6 +33,7 @@ class RenderThread{
 };
 
 void RenderThread::init_renderwindow(size_t x_res, size_t y_res){
+  std::cout << "init_renderwindow" << std::endl;
   this->istyle = vtkSmartPointer<vtkInteractorStyleImage>::New();
   this->istyle->SetInteractionModeToImage2D();
 
@@ -40,7 +41,6 @@ void RenderThread::init_renderwindow(size_t x_res, size_t y_res){
   this->renderer->SetBackground(0,0,0);
 
   this->renderwindow = vtkSmartPointer<vtkRenderWindow>::New();
-  this->renderwindow->SetMultiSamples(0); //hw antialiasing level
   this->renderwindow->AddRenderer(renderer);
   this->renderwindow->SetSize(x_res,y_res);
 
@@ -48,14 +48,14 @@ void RenderThread::init_renderwindow(size_t x_res, size_t y_res){
   this->iren->SetRenderWindow(renderwindow); 
   this->iren->SetInteractorStyle(this->istyle);
   this->iren->Initialize();
-
+  std::cout << "init_renderwindow_complete" << std::endl;
 }
 
 void RenderThread::init_scene(double scene_length){
+  std::cout << "init_scene" << std::endl;
   this->cuehandler = vtkSmartPointer<CueHandler>::New();
   this->iren->AddObserver(vtkCommand::TimerEvent, this->cuehandler);
-  int tid = this->iren->CreateRepeatingTimer(40);
-  std::cout << "Timer id: " << tid << std::endl;
+  int tid = this->iren->CreateRepeatingTimer(5);
 }
 
 void RenderThread::register_animator(std::shared_ptr<ImageAnimator> animator){
