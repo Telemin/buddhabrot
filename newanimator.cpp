@@ -25,7 +25,7 @@ void ImageAnimator::terminate_threads(){
 void ImageAnimator::render(){
   std::cout << "Frame " << ++frame << std::endl;
   this->trajgen->deposit_to_histogram();
-  std::vector<unsigned char> histo = this->trajgen->get_histogram(2, 0);
+  std::vector<unsigned char> &histo = this->trajgen->get_histogram(2, 0);
   std::copy(histo.begin(), histo.end(), this->imgdata->begin());
   this->imgimport->Modified();
   this->imgimport->Update();

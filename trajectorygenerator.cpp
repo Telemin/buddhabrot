@@ -1,5 +1,7 @@
 #include "trajectorygenerator.hpp"
 #include <iostream>
+#include <fstream>
+#include <chrono>
 
 TrajectoryGenerator::TrajectoryGenerator(double rmin, double rmax, double imax)
                             :rmin(rmin), rmax(rmax), imin(-imax), imax(imax){
@@ -56,6 +58,7 @@ void TrajectoryGenerator::init_histogram(size_t x, size_t y){
 
 
 void TrajectoryGenerator::deposit_to_histogram(){
+  auto start = std::chrono::system_clock::now();
   double dx = (rmax - rmin) / hist_xbins;
   double dy = (imax - imin) / hist_ybins;
   size_t arr_offset = hist_xbins * hist_ybins - 1;
@@ -103,9 +106,12 @@ void TrajectoryGenerator::deposit_to_histogram(){
     }
     delete traj_it;
   }
+  auto end = std::chrono::system_clock::now();
+  auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "Hist deposit in " << diff.count() << "ms\n";
 }
 
-std::vector<unsigned char> TrajectoryGenerator::get_histogram(double gamma, double thres){
+std::vector<unsigned char>& TrajectoryGenerator::get_histogram(double gamma, double thres){
   double igamma = 1./gamma;
   double rmax = *std::max_element(red.begin(), red.end());
   double gmax = *std::max_element(green.begin(), green.end());
@@ -126,7 +132,7 @@ std::vector<unsigned char> TrajectoryGenerator::get_histogram(double gamma, doub
 
 void TrajectoryGenerator::runthread(){
   while(!this->stop){
-    if(this->trajs.unsafe_size() < 1000){	  
+    if(this->trajs.unsafe_size() < 10000){	  
 	generate_trajs(100);
     }
   }
@@ -144,4 +150,17 @@ void TrajectoryGenerator::stop_threads(){
   for(auto& it : this->threads){
     it.join();
   }
+}
+
+void TrajectoryGenerator::write_raw_data(std::string fname){
+  std::ofstream fh;
+  fh.open(fname + ".red", std::ios::binary | std::ios::out);
+  fh.write(reinterpret_cast<char*>(this->red.data()), sizeof(size_t) * (size_t)this->red.size());
+  fh.close();
+  fh.open(fname + ".green", std::ios::binary | std::ios::out);
+  fh.write(reinterpret_cast<char*>(this->green.data()), sizeof(size_t) * this->green.size());
+  fh.close();
+  fh.open(fname + ".blue", std::ios::binary | std::ios::out);
+  fh.write(reinterpret_cast<char*>(this->blue.data()), sizeof(size_t) * this->blue.size());
+  fh.close();
 }

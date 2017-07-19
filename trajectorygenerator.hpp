@@ -20,7 +20,7 @@ class TrajectoryGenerator{
     double rmin, rmax, imin, imax;
     bool stats_stale = true;
     bool stop;
-    size_t thres = 10;
+    size_t thres = 50;
     size_t min = 200;
     size_t mid = 2000;
     size_t max = 20000;
@@ -37,10 +37,11 @@ class TrajectoryGenerator{
     void generate_trajs(size_t n_trajs);
     void calculate_trajs();
     size_t num_trajs();
+    void write_raw_data(std::string fname);
 
     void init_histogram(size_t x, size_t y);
     void deposit_to_histogram();
-    std::vector<unsigned char> get_histogram(double gamma = 2.0, double thres = 0.);
+    std::vector<unsigned char>& get_histogram(double gamma = 2.0, double thres = 0.);
 
 };
 
